@@ -101,7 +101,7 @@ def extract_feats(ffs, direc="train", global_feat_dict=None):
     fds = [] # list of feature dicts
     classes = []
     ids = []
-    x = os.listdir(direc)[1:]
+    x = os.listdir(direc)[1:] # i'm make getting an error
     for datafile in x:
         # extract id and true class (if available) from filename
         id_str,clazz = datafile.split('.')[:2]
@@ -179,7 +179,15 @@ def make_design_mat(fds, global_feat_dict=None):
 ## Here are two example feature-functions. They each take an xml.etree.ElementTree object,
 # (i.e., the result of parsing an xml file) and returns a dictionary mapping
 # feature-names to numeric values.
+
 ## TODO: modify these functions, and/or add new ones.
+
+def count_all_feats(tree):
+    c = Counter()
+    for el in tree.iter():
+      c[el.tag] += 1
+    return c
+
 def first_last_system_call_feats(tree):
     """
     arguments:
@@ -195,6 +203,7 @@ def first_last_system_call_feats(tree):
     first = True # is this the first system call
     last_call = None # keep track of last call we've seen
     for el in tree.iter():
+        print el.tag
         # ignore everything outside the "all_section" element
         if el.tag == "all_section" and not in_all_section:
             in_all_section = True
@@ -237,7 +246,7 @@ def main():
     outputfile = "sample_predictions.csv"  # feel free to change this or take it as an argument
 
     # TODO put the names of the feature functions you've defined above in this list
-    ffs = [first_last_system_call_feats, system_call_count_feats]
+    ffs = [first_last_system_call_feats, system_call_count_feats, count_all_feats]
 
     # extract features
     print "extracting training features..."
