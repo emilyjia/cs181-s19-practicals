@@ -206,6 +206,7 @@ def count_all_feats(tree):
       c[el.tag] += 1
     return c
 
+
 def first_last_system_call_feats(tree):
     """
     arguments:
@@ -221,6 +222,8 @@ def first_last_system_call_feats(tree):
     first = True # is this the first system call
     last_call = None # keep track of last call we've seen
     for el in tree.iter():
+        if el.tag == "dump_line":
+            print "HELLO"
         # ignore everything outside the "all_section" element
         if el.tag == "all_section" and not in_all_section:
             in_all_section = True
