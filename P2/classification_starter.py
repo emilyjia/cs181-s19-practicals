@@ -182,13 +182,19 @@ def make_design_mat(fds, global_feat_dict=None):
 
 ## TODO: modify these functions, and/or add new ones.
 
-def find_all_reasons(tree):
+def count_all_reasons(tree):
     c = Counter()
     for el in tree.iter():
       if el.tag == "process":
         c["term" + el.attrib["terminationreason"]] += 1
         c["start" + el.attrib["startreason"]] += 1
         c[el.attrib["executionstatus"]] += 1
+    return c
+
+def count_all_flags(tree):
+    c = Counter()
+    for el in tree.iter():
+        c[el.attrib["flags"]] += 1
     return c
 
 def count_all_feats(tree):
@@ -254,7 +260,7 @@ def main():
     outputfile = "013.csv"  # feel free to change this or take it as an argument
 
     # TODO put the names of the feature functions you've defined above in this list
-    ffs = [first_last_system_call_feats, system_call_count_feats, count_all_feats, find_all_reasons]
+    ffs = [first_last_system_call_feats, system_call_count_feats, count_all_feats, count_all_reasons, count_all_flags]
 
     # extract features
     print "extracting training features..."
@@ -292,4 +298,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
