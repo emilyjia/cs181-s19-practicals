@@ -182,11 +182,27 @@ def make_design_mat(fds, global_feat_dict=None):
 
 ## TODO: modify these functions, and/or add new ones.
 
+def count_all_reasons(tree):
+    c = Counter()
+    for el in tree.iter():
+      if el.tag == "process":
+        c["term" + el.attrib["terminationreason"]] += 1
+        c["start" + el.attrib["startreason"]] += 1
+        c[el.attrib["executionstatus"]] += 1
+    return c
+
+def count_all_flags(tree):
+    c = Counter()
+    for el in tree.iter():
+        c[el.attrib["flags"]] += 1
+    return c
+
 def count_all_feats(tree):
     c = Counter()
     for el in tree.iter():
       c[el.tag] += 1
     return c
+
 
 def first_last_system_call_feats(tree):
     """
@@ -203,6 +219,8 @@ def first_last_system_call_feats(tree):
     first = True # is this the first system call
     last_call = None # keep track of last call we've seen
     for el in tree.iter():
+        if el.tag == "dump_line":
+            print "HELLO"
         # ignore everything outside the "all_section" element
         if el.tag == "all_section" and not in_all_section:
             in_all_section = True
@@ -242,10 +260,10 @@ def system_call_count_feats(tree):
 def main():
     train_dir = "train"
     test_dir = "test"
-    outputfile = "012.csv"  # feel free to change this or take it as an argument
+    outputfile = "013.csv"  # feel free to change this or take it as an argument
 
     # TODO put the names of the feature functions you've defined above in this list
-    ffs = [first_last_system_call_feats, system_call_count_feats, count_all_feats]
+    ffs = [first_last_system_call_feats, system_call_count_feats, count_all_feats, count_all_reasons, count_all_flags]
 
     # extract features
     print "extracting training features..."
@@ -255,7 +273,7 @@ def main():
 
     # TODO train here, and learn your classification parameters
     print "learning..."
-    model = RandomForestClassifier()
+    model = RandomForestClassifier(n_estimators=300, n_jobs=-1)
     model.fit(X_train, t_train)
     print "done learning"
     print
@@ -283,4 +301,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
