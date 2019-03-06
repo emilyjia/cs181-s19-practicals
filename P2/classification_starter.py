@@ -194,7 +194,10 @@ def count_all_reasons(tree):
 def count_all_flags(tree):
     c = Counter()
     for el in tree.iter():
-        c[el.attrib["flags"]] += 1
+        if el.attrib.get("flags") == None:
+            continue
+        else:
+            c[el.attrib["flags"]] += 1
     return c
 
 def count_all_feats(tree):
